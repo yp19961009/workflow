@@ -119,7 +119,7 @@ void *msgqueue_get(msgqueue_t *queue)
 	return msg;
 }
 
-msgqueue_t *msgqueue_create(size_t maxlen, int linkoff)
+msgqueue_t *msgqueue_create(size_t maxlen, int linkoff)//不懂
 {
 	msgqueue_t *queue = (msgqueue_t *)malloc(sizeof (msgqueue_t));
 	int ret;
@@ -127,7 +127,7 @@ msgqueue_t *msgqueue_create(size_t maxlen, int linkoff)
 	if (!queue)
 		return NULL;
 
-	ret = pthread_mutex_init(&queue->get_mutex, NULL);
+	ret = pthread_mutex_init(&queue->get_mutex, NULL);//get_mutex是个struct中的变量，按理说这个变量还没有初始值的吧
 	if (ret == 0)
 	{
 		ret = pthread_mutex_init(&queue->put_mutex, NULL);
@@ -136,7 +136,7 @@ msgqueue_t *msgqueue_create(size_t maxlen, int linkoff)
 			ret = pthread_cond_init(&queue->get_cond, NULL);
 			if (ret == 0)
 			{
-				ret = pthread_cond_init(&queue->put_cond, NULL);
+				ret = pthread_cond_init(&queue->put_cond, NULL);//init和下面的destroy对称
 				if (ret == 0)
 				{
 					queue->msg_max = maxlen;

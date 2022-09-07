@@ -148,7 +148,7 @@ thrdpool_t *thrdpool_create(size_t nthreads, size_t stacksize)
 	if (!pool)
 		return NULL;
 
-	pool->msgqueue = msgqueue_create((size_t)-1, 0);
+	pool->msgqueue = msgqueue_create((size_t)-1, 0);//-1转成无符号的long型，是多少呢
 	if (pool->msgqueue)
 	{
 		ret = pthread_mutex_init(&pool->mutex, NULL);

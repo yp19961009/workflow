@@ -28,8 +28,8 @@ void SubTask::subtask_done()
 	{
 		parent = cur->parent;
 		entry = cur->entry;
-		cur = cur->done();
-		if (cur)
+		cur = cur->done();//这里不是存虚函数吗？没有实现怎么能直接调用
+		if (cur)//指针为NULL的时候，相当于0，即false
 		{
 			cur->parent = parent;
 			cur->entry = entry;
