@@ -291,13 +291,13 @@ protected:
 	int keep_alive_timeo;
 	REQ req;
 	RESP resp;
-	std::function<void (WFNetworkTask<REQ, RESP> *)> callback;
+	std::function<void (WFNetworkTask<REQ, RESP> *)> callback;//std::function函数包装成对象？
 
 protected:
 	WFNetworkTask(CommSchedObject *object, CommScheduler *scheduler,
-				  std::function<void (WFNetworkTask<REQ, RESP> *)>&& cb) :
+				  std::function<void (WFNetworkTask<REQ, RESP> *)>&& cb) ://右值引用？move？？？
 		CommRequest(object, scheduler),
-		callback(std::move(cb))
+		callback(std::move(cb))//这是什么操作？？？？垃圾c++
 	{
 		this->send_timeo = -1;
 		this->receive_timeo = -1;
