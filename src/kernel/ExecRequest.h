@@ -35,7 +35,7 @@ public:
 	void set_request_queue(ExecQueue *queue) { this->queue = queue; }
 
 public:
-	virtual void dispatch()//重写的SubTask的dispatch方法
+	virtual void dispatch()//实现SubTask的dispatch方法
 	{
 		if (this->executor->request(this, this->queue) < 0)
 			this->handle(ES_STATE_ERROR, errno);
