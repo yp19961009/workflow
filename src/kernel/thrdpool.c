@@ -34,7 +34,7 @@ struct __thrdpool
 	pthread_cond_t *terminate;
 };
 
-struct __thrdpool_task_entry
+struct __thrdpool_task_entry//先是next指针，后是数据本体
 {
 	void *link;
 	struct thrdpool_task task;
