@@ -68,7 +68,7 @@ public:
 	int request(ExecSession *session, ExecQueue *queue);
 
 private:
-	struct __thrdpool *thrdpool;
+	struct __thrdpool *thrdpool;//线程池在Executor里
 
 private:
 	static void executor_thread_routine(void *context);

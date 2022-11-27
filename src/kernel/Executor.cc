@@ -71,7 +71,7 @@ void Executor::deinit()
 }
 
 extern "C" void __thrdpool_schedule(const struct thrdpool_task *, void *,
-									thrdpool_t *);
+									thrdpool_t *);//？？？？？？？？？？？？？？？？？？？
 
 void Executor::executor_thread_routine(void *context)
 {
@@ -80,16 +80,16 @@ void Executor::executor_thread_routine(void *context)
 	ExecSession *session;
 
 	pthread_mutex_lock(&queue->mutex);
-	entry = list_entry(queue->task_list.next, struct ExecTaskEntry, list);
+	entry = list_entry(queue->task_list.next, struct ExecTaskEntry, list);//？？？
 	list_del(&entry->list);
 	session = entry->session;
 	if (!list_empty(&queue->task_list))
 	{
 		struct thrdpool_task task = {
-			.routine	=	Executor::executor_thread_routine,
+			.routine	=	Executor::executor_thread_routine,//递归了？
 			.context	=	queue
 		};
-		__thrdpool_schedule(&task, entry, entry->thrdpool);
+		__thrdpool_schedule(&task, entry, entry->thrdpool);//拿到任务，放到线程池中执行
 	}
 	else
 		free(entry);

@@ -11,7 +11,7 @@
  * using the generic single-entry routines.
  */
 
-struct list_head {//？？？？
+struct list_head {
 	struct list_head *next, *prev;
 };
 
