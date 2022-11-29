@@ -25,12 +25,12 @@
 
 struct ExecTaskEntry
 {
-	struct list_head list;
-	ExecSession *session;
-	thrdpool_t *thrdpool;
+	struct list_head list;//任务本身
+	ExecSession *session;//所属的session
+	thrdpool_t *thrdpool;//执行的线程池
 };
 
-int ExecQueue::init()
+int ExecQueue::init()//里面有任务链表
 {
 	int ret;
 
@@ -50,7 +50,7 @@ void ExecQueue::deinit()
 	pthread_mutex_destroy(&this->mutex);
 }
 
-int Executor::init(size_t nthreads)
+int Executor::init(size_t nthreads)//里面有线程池
 {
 	if (nthreads == 0)
 	{
@@ -58,7 +58,7 @@ int Executor::init(size_t nthreads)
 		return -1;
 	}
 
-	this->thrdpool = thrdpool_create(nthreads, 0);
+	this->thrdpool = thrdpool_create(nthreads, 0);//stacksize=0?
 	if (this->thrdpool)
 		return 0;
 
@@ -71,7 +71,7 @@ void Executor::deinit()
 }
 
 extern "C" void __thrdpool_schedule(const struct thrdpool_task *, void *,
-									thrdpool_t *);//？？？？？？？？？？？？？？？？？？？
+									thrdpool_t *);//？？？？？？？？？？？？？？？？？？？让c++ 兼容c代码，这里的代码要用c编译器编译（因为编译规则不一样，翻译成符号的时候的规则不一样吧）
 
 void Executor::executor_thread_routine(void *context)
 {
@@ -80,10 +80,10 @@ void Executor::executor_thread_routine(void *context)
 	ExecSession *session;
 
 	pthread_mutex_lock(&queue->mutex);
-	entry = list_entry(queue->task_list.next, struct ExecTaskEntry, list);//？？？
-	list_del(&entry->list);
+	entry = list_entry(queue->task_list.next, struct ExecTaskEntry, list);//这是宏函数，list相当于一个字符串，预编译翻译宏的时候，会翻译成宏函数的定义，具体做的就是，通过list_head这个结构体中的next指针，通过偏移（后面两个参数算出来的偏移），找到包含list_head 结构体的ExecTaskEntry结构体
+	list_del(&entry->list);//相当于把list中的task所属的ExecTaskEntry取出来了，就可以把这个task，从list中去除
 	session = entry->session;
-	if (!list_empty(&queue->task_list))
+	if (!list_empty(&queue->task_list))//？这里不是很懂，只有一个任务的时候，list_del删掉是没效果的？为什么加这个判断
 	{
 		struct thrdpool_task task = {
 			.routine	=	Executor::executor_thread_routine,//递归了？

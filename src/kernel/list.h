@@ -171,9 +171,10 @@ static inline void list_splice_init(struct list_head *list,
  * @type:	the type of the struct this is embedded in.
  * @member:	the name of the list_struct within the struct.
  */
-#define list_entry(ptr, type, member) \
-	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
-
+#define list_entry(ptr, type, member) \           
+	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))//带参数的宏，前面是参数，后面的括号是函数内容，在预编译的时候即算出来list_entry(ptr, type, member)的值，
+	//这里计算出来了(unsigned long)(&((type *)0)->member)type这个结构体中member成员相对于结构体的便宜，0相当于结构体在0处，然后此时成员的位置即相当于偏移了，（x-0=x），至于为什么指针为0，没有报错，这是因为编译器做了优化，编译的时候不会产生访问0内存的地址，直接在编译的时候算出来偏移
+	//(unsigned long)是因为前面的char指针，只能和数加减，不能和指针加减
 /**
  * list_for_each	-	iterate over a list
  * @pos:	the &struct list_head to use as a loop counter.
