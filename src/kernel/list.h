@@ -76,7 +76,7 @@ static inline void list_add_tail(struct list_head *node,
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_del(struct list_head *prev, struct list_head *next)
+static inline void __list_del(struct list_head *prev, struct list_head *next)//上面注释说，这个接待你必须有前后两个entry，因此至少还有三个节点，且只能删除中间的
 {
 	next->prev = prev;
 	prev->next = next;

@@ -185,7 +185,7 @@ void __thrdpool_schedule(const struct thrdpool_task *task, void *buf,//重名？
 						 thrdpool_t *pool)
 {
 	((struct __thrdpool_task_entry *)buf)->task = *task;
-	msgqueue_put(buf, pool->msgqueue);
+	msgqueue_put(buf, pool->msgqueue);//往消息队列里放task
 }
 
 int thrdpool_schedule(const struct thrdpool_task *task, thrdpool_t *pool)

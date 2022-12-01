@@ -25,7 +25,7 @@
 
 struct ExecTaskEntry
 {
-	struct list_head list;//任务本身
+	struct list_head list;//
 	ExecSession *session;//所属的session
 	thrdpool_t *thrdpool;//执行的线程池
 };
@@ -80,22 +80,22 @@ void Executor::executor_thread_routine(void *context)
 	ExecSession *session;
 
 	pthread_mutex_lock(&queue->mutex);
-	entry = list_entry(queue->task_list.next, struct ExecTaskEntry, list);//这是宏函数，list相当于一个字符串，预编译翻译宏的时候，会翻译成宏函数的定义，具体做的就是，通过list_head这个结构体中的next指针，通过偏移（后面两个参数算出来的偏移），找到包含list_head 结构体的ExecTaskEntry结构体
-	list_del(&entry->list);//相当于把list中的task所属的ExecTaskEntry取出来了，就可以把这个task，从list中去除
+	entry = list_entry(queue->task_list.next, struct ExecTaskEntry, list);//这是宏函数，list相当于一个字符串，预编译翻译宏的时候，会翻译成宏函数的定义，具体做的就是，通过list_head这个结构体中的next指针，通过偏移（后面两个参数算出来的偏移），找到包含next list结构体的ExecTaskEntry结构体
+	list_del(&entry->list);//相当于把list中的task所属的ExecTaskEntry取出来了，就可以把这个task，从list中去除，这个list保证前后必须有list，那只有两个list的情况呢？
 	session = entry->session;
-	if (!list_empty(&queue->task_list))//？这里不是很懂，只有一个任务的时候，list_del删掉是没效果的？为什么加这个判断
+	if (!list_empty(&queue->task_list))//？这里不是很懂，只有一个任务的时候，list_del删掉是没效果的？为什么加这个判断,因为task_list（头部）是不会改变的，但是如果原本有两个entry，然后删除一个，这里就剩一个了，然后判断为空，那那个被删除的entry怎么执行呢
 	{
 		struct thrdpool_task task = {
-			.routine	=	Executor::executor_thread_routine,//递归了？
+			.routine	=	Executor::executor_thread_routine,//递归了，？？？？
 			.context	=	queue
 		};
-		__thrdpool_schedule(&task, entry, entry->thrdpool);//拿到任务，放到线程池中执行
+		__thrdpool_schedule(&task, entry, entry->thrdpool);//拿到任务，放到线程池中执行，entry即之前的msg，里面有task和link，这里即设置了task
 	}
 	else
 		free(entry);
 
 	pthread_mutex_unlock(&queue->mutex);
-	session->execute();
+	session->execute();//这里是真正执行的内容，每一个entry都有一个session，对应一个任务
 	session->handle(ES_STATE_FINISHED, 0);
 }
 

@@ -45,7 +45,7 @@ public:
 class ExecSession
 {
 private:
-	virtual void execute() = 0;
+	virtual void execute() = 0;;//这个是真正执行的内容
 	virtual void handle(int state, int error) = 0;
 
 protected:
