@@ -32,14 +32,14 @@ static inline void INIT_LIST_HEAD(struct list_head *list)
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_add(struct list_head *node,
-							  struct list_head *prev,
-							  struct list_head *next)
+static inline void __list_add(struct list_head *node,//这里也比较重要，要梳理明白才行的
+							  struct list_head *prev,//这里是head->pre，但是因为是值传递，所以相当于新创建了个指针，然后也指向head->pre指向的位置
+							  struct list_head *next)//这里是head*，
 {
 	next->prev = node;
 	node->next = next;
 	node->prev = prev;
-	prev->next = node;
+	prev->next = node;//这个pre和第一行那个pre不是一个指针，虽然刚开始指向同一个地址
 }
 
 /**
@@ -76,7 +76,7 @@ static inline void list_add_tail(struct list_head *node,
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_del(struct list_head *prev, struct list_head *next)//上面注释说，这个接待你必须有前后两个entry，因此至少还有三个节点，且只能删除中间的
+static inline void __list_del(struct list_head *prev, struct list_head *next)
 {
 	next->prev = prev;
 	prev->next = next;
